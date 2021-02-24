@@ -9,5 +9,6 @@ Instructions for running note classification code:
 Alternatively, you can remove these unwanted files:
 
 `find . -maxdepth 1 -type f -not -name "*{filter}*" -exec rm -rf {} \;`
+
 4. Move each instrument directory to the sound_samples folder
 5. note_classification/note_classification_code.py will then read .wav files from sound_samples directory. (e.g. to read a trumpet sound file, we would read from the path: Physics4BL-Project/sound_samples/trumpet/{name of trumpet file}.wav)
