@@ -26,7 +26,7 @@ def find_closest_note(pitch):
   closestPitch = CONCERT_PITCH*2**(i/12)
   return closestNote, closestPitch
 
-def get_peak(rate, data):
+def get_peak(rate, data, useHPS):
     
     samp_period = 1. / rate
     num_data_points = len(data)
@@ -36,32 +36,50 @@ def get_peak(rate, data):
     fft_out = fft(data)
     abs_fft = np.abs(fft_out)
 
-    hpsSpec = copy.deepcopy(abs_fft)
-    for i in range(NUM_HPS):
-      tmpHpsSpec = np.multiply(hpsSpec[:int(np.ceil(len(abs_fft)/(i+1)))], abs_fft[::(i+1)])
-      if not any(tmpHpsSpec):
-        break
-      hpsSpec = tmpHpsSpec
+    peak_location = None
+    if useHPS:
+      hpsSpec = copy.deepcopy(abs_fft)
+      for i in range(NUM_HPS):
+        tmpHpsSpec = np.multiply(hpsSpec[:int(np.ceil(len(abs_fft)/(i+1)))], abs_fft[::(i+1)])
+        if not any(tmpHpsSpec):
+          break
+        hpsSpec = tmpHpsSpec
 
-    maxInd = np.argmax(hpsSpec)
+      maxInd = np.argmax(hpsSpec)
+      peak_location = frequencies[maxInd]
 
-    peak_location = frequencies[maxInd]
+    else:
+      maxInd = np.argmax(abs_fft)
+      peak_location = frequencies[maxInd]
+
+
+
     return peak_location
 
-def read_files(path):
+def read_files(path, useHPS):
     files = os.listdir(path)
+    errors = 0
     for file in files:
         if file.endswith(".wav"):
             rate, data = wavfile.read(path + '/' + file)
-            peak = get_peak(rate, data)
+            peak = get_peak(rate, data, useHPS)
             note, pitch  = find_closest_note(peak)
-            print(pitch)
             real_note = file.split("_")[1]
-            print("Predicted: ")
-            print(note)
-            print("Real")
-            print(real_note)
-            print("\n")
+            if real_note[1] == 's':
+              real_note = real_note[0] + '#' + real_note[2]
+            if real_note != note:
+              print(pitch)
+              print(note)
+              print(real_note)
+              errors+=1
+    print("Error")
+    print(errors/len(files))
+    print(len(files))
 
-read_files(trumpet_path)
+print("trumpet")
+read_files(trumpet_path, True)
+print("\n\n")
+print("cello")
+read_files(cello_path, True)
+
 
