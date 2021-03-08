@@ -11,18 +11,44 @@ import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 import copy
+import math
+import pdb
 
 trumpet_path =  '../sound_samples/trumpet'
 cello_path =  '../sound_samples/cello'
-sax_path = '../sound_samples/saxophone'
+test_path = '../sound_samples/test'
 
 CONCERT_PITCH = 440
 ALL_NOTES = ["A","A#","B","C","C#","D","D#","E","F","F#","G","G#"]
 NUM_HPS = 8
 
+
 def find_closest_note(pitch):
   i = int( np.round( np.log2( pitch/CONCERT_PITCH )*12 ) )
-  closestNote = ALL_NOTES[i%12] + str(4 + np.sign(i) * int( (9+abs(i))/12 ) )
+  closestNote = ALL_NOTES[i%12]
+
+  octave = ""
+  # octaves are referenced from here: https://pages.mtu.edu/~suits/notefreqs.html
+  if math.isclose(pitch, 30.87, abs_tol=0.915) or pitch <= 30.87:
+    octave = "0"
+  elif math.isclose(pitch, 61.74, abs_tol=1.835) or pitch <= 61.74:
+    octave = "1"
+  elif math.isclose(pitch, 123.47, abs_tol= 3.67) or pitch <= 123.47:
+    octave = "2"
+  elif math.isclose(pitch, 246.94, abs_tol=.345) or pitch <= 246.94:
+    octave = "3"
+  elif math.isclose(pitch, 493.88, abs_tol=14.685) or pitch <= 493.88:
+    octave = "4"
+  elif math.isclose(pitch, 987.77, abs_tol=29.365) or pitch <= 987.77:
+    octave = "5"
+  elif math.isclose(pitch, 1975.53, abs_tol=58.835) or pitch <= 1975.53:
+    octave = "6"
+  elif math.isclose(pitch, 3951.07, abs_tol=117.47) or pitch <= 3951.07:
+    octave = "7"
+  elif math.isclose(pitch, 7902.13, abs_tol=117.47) or pitch <= 7902.13:
+    octave = "8"
+  
+  closestNote += octave
   closestPitch = CONCERT_PITCH*2**(i/12)
   return closestNote, closestPitch
 
@@ -68,13 +94,11 @@ def read_files(path, useHPS):
             if real_note[1] == 's':
               real_note = real_note[0] + '#' + real_note[2]
             if real_note != note:
-              print(pitch)
               print(note)
               print(real_note)
               errors+=1
-    print("Error")
-    print(errors/len(files))
-    print(len(files))
+    print("Accuracy")
+    print(100 * (len(files) - errors)/len(files))
 
 print("trumpet")
 read_files(trumpet_path, True)
