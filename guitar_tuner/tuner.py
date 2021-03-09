@@ -74,15 +74,15 @@ def callback(indata, frames, time, status):
       magnitudeSpec[i] = 0
 
     #Calculate average energy per frequency for the octave bands
-    octaveBands = [50,100,200,400,800,1600,3200,6400,12800,25600]
-    for j in range(len(octaveBands)-1):
-      indStart = int(octaveBands[j]/DELTA_FREQ)
-      indEnd = int(octaveBands[j+1]/DELTA_FREQ)
-      indEnd = indEnd if len(magnitudeSpec) > indEnd else len(magnitudeSpec)
-      avgEnergPerFreq = 1*(np.linalg.norm(magnitudeSpec[indStart:indEnd], ord=2)**2) / (indEnd-indStart)
-      avgEnergPerFreq = avgEnergPerFreq**0.5
-      for i in range(indStart, indEnd):
-        magnitudeSpec[i] = magnitudeSpec[i] if magnitudeSpec[i] > avgEnergPerFreq else 0  #suppress white noise
+    # octaveBands = [50,100,200,400,800,1600,3200,6400,12800,25600]
+    # for j in range(len(octaveBands)-1):
+    #   indStart = int(octaveBands[j]/DELTA_FREQ)
+    #   indEnd = int(octaveBands[j+1]/DELTA_FREQ)
+    #   indEnd = indEnd if len(magnitudeSpec) > indEnd else len(magnitudeSpec)
+    #   avgEnergPerFreq = 1*(np.linalg.norm(magnitudeSpec[indStart:indEnd], ord=2)**2) / (indEnd-indStart)
+    #   avgEnergPerFreq = avgEnergPerFreq**0.5
+    #   for i in range(indStart, indEnd):
+    #     magnitudeSpec[i] = magnitudeSpec[i] if magnitudeSpec[i] > avgEnergPerFreq else 0  #suppress white noise
 
     #Interpolate spectrum
     magSpecIpol = np.interp(np.arange(0, len(magnitudeSpec), 1/NUM_HPS), np.arange(0, len(magnitudeSpec)), magnitudeSpec)
