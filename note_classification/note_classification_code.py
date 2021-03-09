@@ -35,7 +35,7 @@ def find_closest_note(pitch):
     octave = "1"
   elif math.isclose(pitch, 123.47, abs_tol= 3.67) or pitch <= 123.47:
     octave = "2"
-  elif math.isclose(pitch, 246.94, abs_tol=.345) or pitch <= 246.94:
+  elif math.isclose(pitch, 246.94, abs_tol=7.345) or pitch <= 246.94:
     octave = "3"
   elif math.isclose(pitch, 493.88, abs_tol=14.685) or pitch <= 493.88:
     octave = "4"
@@ -83,7 +83,7 @@ def get_peak(rate, data, useHPS):
     return peak_location
 
 def read_files(path, useHPS):
-    files = os.listdir(path)
+    files = sorted(os.listdir(path))
     errors = 0
     for file in files:
         if file.endswith(".wav"):
@@ -94,16 +94,21 @@ def read_files(path, useHPS):
             if real_note[1] == 's':
               real_note = real_note[0] + '#' + real_note[2]
             if real_note != note:
-              print(note)
-              print(real_note)
+              print("Predicted: " + note + "  Actual: " + real_note)
               errors+=1
     print("Accuracy")
     print(100 * (len(files) - errors)/len(files))
 
-print("trumpet")
+print("trumpet no HPS")
+read_files(trumpet_path, False)
+print("\n\n")
+print("cello no HPS")
+read_files(cello_path, False)
+print("\n\n")
+print("trumpet HPS")
 read_files(trumpet_path, True)
 print("\n\n")
-print("cello")
+print("cello HPS")
 read_files(cello_path, True)
-
+print("\n\n")
 

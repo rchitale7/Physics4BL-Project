@@ -32,9 +32,9 @@ def find_closest_note(pitch):
     octave = "0"
   elif math.isclose(pitch, 61.74, abs_tol=1.835) or pitch <= 61.74:
     octave = "1"
-  elif math.isclose(pitch, 123.47, abs_tol= 3.67) or pitch <= 123.47:
+  elif math.isclose(pitch, 123.47, abs_tol=3.67) or pitch <= 123.47:
     octave = "2"
-  elif math.isclose(pitch, 246.94, abs_tol=.345) or pitch <= 246.94:
+  elif math.isclose(pitch, 246.94, abs_tol=7.345) or pitch <= 246.94:
     octave = "3"
   elif math.isclose(pitch, 493.88, abs_tol=14.685) or pitch <= 493.88:
     octave = "4"
@@ -113,8 +113,9 @@ def callback(indata, frames, time, status):
     else:
       return
     #os.system('cls' if os.name=='nt' else 'clear')
-    print(f"Closest note: {closestNote} {maxFreq}/{closestPitch}")
-
+    pitchDiff = round(maxFreq - closestPitch, 1)
+    centsDiff = round(1200 * np.log2(maxFreq / closestPitch), 1)
+    print(f"{closestNote: >3} | {maxFreq: >6} Hz | Diff: {pitchDiff: >5} Hz ({centsDiff: >5}¢)")
   else:
     print('no input')
 
