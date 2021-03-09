@@ -4,6 +4,7 @@ import scipy.fftpack
 import os
 import matplotlib.pyplot as plt
 import copy
+import math
 
 # General settings
 SAMPLE_FREQ = 48000 # sample frequency in Hz
@@ -21,10 +22,34 @@ noteBuffer = ["1","2","3"]
 CONCERT_PITCH = 440
 ALL_NOTES = ["A","A#","B","C","C#","D","D#","E","F","F#","G","G#"]
 def find_closest_note(pitch):
+
   i = int( np.round( np.log2( pitch/CONCERT_PITCH )*12 ) )
-  clostestNote = ALL_NOTES[i%12] + str(4 + np.sign(i) * int( (9+abs(i))/12 ) )
+  closestNote = ALL_NOTES[i%12]
+
+  octave = ""
+  # octaves are referenced from here: https://pages.mtu.edu/~suits/notefreqs.html
+  if math.isclose(pitch, 30.87, abs_tol=0.915) or pitch <= 30.87:
+    octave = "0"
+  elif math.isclose(pitch, 61.74, abs_tol=1.835) or pitch <= 61.74:
+    octave = "1"
+  elif math.isclose(pitch, 123.47, abs_tol= 3.67) or pitch <= 123.47:
+    octave = "2"
+  elif math.isclose(pitch, 246.94, abs_tol=.345) or pitch <= 246.94:
+    octave = "3"
+  elif math.isclose(pitch, 493.88, abs_tol=14.685) or pitch <= 493.88:
+    octave = "4"
+  elif math.isclose(pitch, 987.77, abs_tol=29.365) or pitch <= 987.77:
+    octave = "5"
+  elif math.isclose(pitch, 1975.53, abs_tol=58.835) or pitch <= 1975.53:
+    octave = "6"
+  elif math.isclose(pitch, 3951.07, abs_tol=117.47) or pitch <= 3951.07:
+    octave = "7"
+  elif math.isclose(pitch, 7902.13, abs_tol=117.47) or pitch <= 7902.13:
+    octave = "8"
+  
+  closestNote += octave
   closestPitch = CONCERT_PITCH*2**(i/12)
-  return clostestNote, closestPitch
+  return closestNote, closestPitch
 
 hannWindow = np.hanning(WINDOW_SIZE)
 def callback(indata, frames, time, status):
@@ -37,8 +62,8 @@ def callback(indata, frames, time, status):
 
     signalPower = (np.linalg.norm(windowSamples, ord=2)**2) / len(windowSamples)
     if signalPower < 5e-7:
-      os.system('cls' if os.name=='nt' else 'clear')
-      print("Closest note: ...")
+      #os.system('cls' if os.name=='nt' else 'clear')
+      #print("Closest note: ...")
       return
 
     hannSamples = windowSamples * hannWindow
@@ -87,7 +112,7 @@ def callback(indata, frames, time, status):
       detectedNote = majorityVote
     else:
       return
-    os.system('cls' if os.name=='nt' else 'clear')
+    #os.system('cls' if os.name=='nt' else 'clear')
     print(f"Closest note: {closestNote} {maxFreq}/{closestPitch}")
 
   else:
